@@ -51,14 +51,29 @@
 
         console.log("---------------------")
         console.log("PART 1...")
+ function calculateCircleArea(radius) {
+        return Math.PI * radius * radius;
+    }
 
+    let radius = 9;
+    let area = calculateCircleArea(radius);
+    console.log("Radius:", radius);
+    console.log("Area:", area);
 
 
 
 
         console.log("---------------------")
         console.log("PART 2...")
+ const button = document.getElementById('calculate');
+    const areaSpan = document.getElementById('display-area');
+    const input = document.getElementById('input-radius');
 
+    button.addEventListener('click', function() {
+        let radiusValue = Number(input.value);
+        let areaValue = calculateCircleArea(radiusValue);
+        areaSpan.textContent = areaValue.toFixed(2);
+    });
 
 
 
