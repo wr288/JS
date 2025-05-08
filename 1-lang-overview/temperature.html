@@ -51,6 +51,20 @@
         and store the resulting Fahrenheit temperature in a variable.
         Log both temperatures to the console.
     </p>
+<script>
+  // Step 1: Define the function that converts Celsius to Fahrenheit
+  function calculateTemp(tempC) {
+    return (9 / 5) * tempC + 32;
+  }
+
+  // Step 2: Call the function with -270 degrees Celsius
+  let celsius = -270;
+  let fahrenheit = calculateTemp(celsius);
+
+  // Step 3: Log both temperatures to the console
+  console.log("Celsius temperature:", celsius, "°C");
+  console.log("Fahrenheit temperature:", fahrenheit.toFixed(2), "°F");
+</script>
 
     <hr>
     <h2>Part 3</h2>
@@ -91,7 +105,22 @@
         console.log("---------------------")
         console.log("PART 3...")
 
+            // Reuse the function from Part 2
+function calculateTemp(tempC) {
+  return (9 / 5) * tempC + 32;
+}
 
+// Add event listener to the button
+document.getElementById("calculate").addEventListener("click", function () {
+  // Get the Celsius value from the input box
+  let inputCelsius = parseFloat(document.getElementById("input-temp-c").value);
+
+  // Convert to Fahrenheit using the function
+  let fahrenheit = calculateTemp(inputCelsius);
+
+  // Display the result in the span
+  document.getElementById("display-temp-f").textContent = fahrenheit.toFixed(2) + " °F";
+});
 
 
 
