@@ -11,8 +11,8 @@
 
     <h2>Dataset Information</h2>
     <p>For this exercise, we will use data from the AlphaVantage API.
-        Specifically we will use the <a href="https://www.alphavantage.co/documentation/#dailyadj">"Time Series Daily (Adjusted)" premium endpoint</a>
-        to fetch historical stock prices about a given company. In this dataset we will focus on the adjusted closing price, which accounts for stock splits.
+        Specifically, we will use the <a href="https://www.alphavantage.co/documentation/#dailyadj">"Time Series Daily (Adjusted)" premium endpoint</a>
+        to fetch historical stock prices about a given company. In this dataset, we will focus on the adjusted closing price, which accounts for stock splits.
         Consult the API documentation to learn more.
     </p>
 
@@ -36,7 +36,7 @@
             <li>Define a function called <code>updateDashboard</code>. It should:
                 <ul>
                     <li>Identify the stock symbol that has been selected from the designated <code>select</code> element, and store it in a variable called <code>symbol</code>.</li>
-                    <li>Dynamically compile a request URL for the specified company, and store it in a variable called <code>requestUrl</code>.
+                    <li>Dynamically compile a request URL for the specified company, and store it in a variable called <code>requestUrl</code>.</li>
                     <li>Fetch a CSV formatted dataset of historical daily adjusted stock prices from the API, using the specified request URL.</li>
                     <li>Display the number of datapoints provided. (i.e. 100).</li>
                     <li>Display the latest available date and the adjusted closing price on that day.</li>
@@ -49,7 +49,6 @@
             <li>Add an event listener to also invoke the function whenever an option is selected from the dropdown menu in the Stock Selection Form. </li>
         </ol>
     </p>
-
 
     <h2>Part 2</h2>
     <p>
@@ -65,8 +64,8 @@
             <li>Display the following information on the page, using the designated <code>span</code> elements:
                 <ul>
                     <li>Display the earliest and latest available dates.</li>
-                    <li>Display the adjusted closing price on the earliest day.</li></li>
-                    <li>Display the adjusted closing price on the latest day.</li></li>
+                    <li>Display the adjusted closing price on the earliest day.</li>
+                    <li>Display the adjusted closing price on the latest day.</li>
                     <li>Display the rate of return over the entire 100-day time period.</li>
                     <li>Display the 100-day high and low price.</li>
                 </ul>
@@ -120,8 +119,6 @@
 
         // AVOID HARD-CODING THE CREDENTIALS
         // USE SESSION STORAGE TO MINIMIZE THE NUMBER OF TIMES WE HAVE TO PROVIDE THE CREDENTIAL
-        // sessionStorage.clear()
-
         // check session storage for the API Key:
         var apiKey = sessionStorage.getItem("ALPHAVANTAGE_API_KEY")
         if (!apiKey) {
@@ -131,51 +128,79 @@
             sessionStorage.setItem("ALPHAVANTAGE_API_KEY", apiKey)
         }
 
-
         // SELECTORS
-        // TODO
-
-
+        var stockSelector = document.getElementById("stock-selector");
 
         // FUNCTION DEFINITION
         function updateDashboard() {
             console.log("--------------------")
 
             // capturing form inputs:
-            var symbol = "NFLX" // TODO: get from drop-down instead
+            var symbol = stockSelector.value;
             console.log("SYMBOL:", symbol)
 
-            var requestUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&datatype=csv&symbol=" + symbol + "&apikey=" + apiKey
+            var requestUrl = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY_ADJUSTED&datatype=csv&symbol=${symbol}&apikey=${apiKey}`;
+            
             d3.csv(requestUrl).then(function(data) {
                 console.log("DATA:", data)
-                // observe the prices are actually strings so to do math with them and chart them we will need to convert them to numbers
 
-                console.log("---------------------")
-                console.log("PART 1...")
+                // Convert string prices to numbers
+                data.forEach(function(d) {
+                    d["adjusted_close"] = parseFloat(d["adjusted_close"]);
+                    d["date"] = d["timestamp"];
+                });
 
+                // Part 1
 
+                // 1. Display number of datapoints
+                var dataPointsCount = data.length;
+                console.log("Number of Data Points:", dataPointsCount);
 
+                // 2. Display latest date and adjusted closing price
+                var latestData = data[0];
+                console.log("Latest Date:", latestData.date, "Latest Adjusted Close:", formatUSD(latestData.adjusted_close));
 
+                // 3. Display earliest date and adjusted closing price
+                var earliestData = data[data.length - 1];
+                console.log("Earliest Date:", earliestData.date, "Earliest Adjusted Close:", formatUSD(earliestData.adjusted_close));
 
-                console.log("---------------------")
-                console.log("PART 2...")
+                // 4. Calculate rate of return
+                var rateOfReturn = (latestData.adjusted_close - earliestData.adjusted_close) / earliestData.adjusted_close;
+                console.log("Rate of Return:", formatPct(rateOfReturn));
 
+                // 5. 100-day high and low prices
+                var prices = data.map(function(d) { return d.adjusted_close; });
+                var highPrice = Math.max(...prices);
+                var lowPrice = Math.min(...prices);
+                console.log("100 Day High:", formatUSD(highPrice), "100 Day Low:", formatUSD(lowPrice));
 
+                // Part 2
 
+                // Displaying results on the page
+                document.getElementById("display-earliest-date").textContent = earliestData.date;
+                document.getElementById("display-latest-date").textContent = latestData.date;
+                document.getElementById("display-earliest-close").textContent = formatUSD(earliestData.adjusted_close);
+                document.getElementById("display-latest-close").textContent = formatUSD(latestData.adjusted_close);
+                document.getElementById("display-return").textContent = formatPct(rateOfReturn);
+                document.getElementById("display-high").textContent = formatUSD(highPrice);
+                document.getElementById("display-low").textContent = formatUSD(lowPrice);
 
+                // Creating line chart
+                var dates = data.map(function(d) { return d.date; });
+                var adjustedClose = data.map(function(d) { return d.adjusted_close; });
 
-            }).catch(function(err){
-                console.error("OOPS", err)
-                alert("OOPS, please check your inputs and try again. For example, try using a premium API key.")
-            })
-        }
+                var trace = {
+                    x: dates,
+                    y: adjustedClose,
+                    type: 'scatter',
+                    mode: 'lines',
+                    name: `Adjusted Close (${symbol})`
+                };
 
-        // trigger an initial chart update when the page loads:
-        //TODO
+                var layout = {
+                    title: `Adjusted Closing Price of ${symbol}`,
+                    xaxis: { title: 'Date' },
+                    yaxis: { title: 'Adjusted Close Price (USD)' }
+                };
 
-        // trigger a subsequent chart update whenever the dropdown option is selected:
-        //TODO
-
-    </script>
-</body>
-</html>
+                Plotly.newPlot('dataviz-container', [trace],
