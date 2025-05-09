@@ -28,7 +28,7 @@
             <li>Define a function called <code>lookupCompany</code>. It should:
                 <ul>
                     <li>Identify the stock symbol that has been input into the provided <code>input</code> element, and store it in a variable called <code>symbol</code>.</li>
-                    <li>Dynamically compile a request URL for the specified company, and store it in a variable called <code>requestUrl</code>.
+                    <li>Dynamically compile a request URL for the specified company, and store it in a variable called <code>requestUrl</code>.</li>
                     <li>Fetch information about the specified company using the specified request URL.</li>
                     <li>Display information about the company, including its:
                         name (i.e. "Netflix Inc"), description, and website URL.
@@ -86,31 +86,26 @@
             sessionStorage.setItem("ALPHAVANTAGE_API_KEY", apiKey)
         }
 
-
-
         // FUNCTION DEFINITION
         function lookupCompany() {
-            var symbol = inputSymbol.value
+            var symbol = document.getElementById("input-symbol").value
             console.log("SYMBOL:", symbol)
 
             var requestUrl = `https://www.alphavantage.co/query?function=OVERVIEW&symbol=${symbol}&apikey=${apiKey}`
             d3.json(requestUrl).then(function(data) {
                 console.log("RESPONSE:", data)
 
-                console.log("---------------------")
-                console.log("PART 1...")
+                // Part 1: Log company info to the console
+                console.log("Company Name:", data["Name"])
+                console.log("Description:", data["Description"])
+                console.log("Website URL:", data["Website"])
 
-
-
-
-
-
-                console.log("---------------------")
-                console.log("PART 2...")
-
-
-
-
+                // Part 2: Display company info on the page
+                document.getElementById("display-name").textContent = data["Name"]
+                document.getElementById("display-description").textContent = data["Description"]
+                var link = document.getElementById("display-link")
+                link.textContent = data["Website"]
+                link.href = data["Website"]
 
             }).catch(function(error) {
                 console.error("ERROR:", error)
@@ -119,9 +114,9 @@
 
         // FUNCTION INVOCATIONS
         // invoke function when the page loads:
-        //lookupCompany()
+        lookupCompany()
         // invoke function when button is clicked:
-        //lookupButton.addEventListener("click", lookupCompany, false)
+        document.getElementById("lookup").addEventListener("click", lookupCompany, false)
 
     </script>
 </body>
