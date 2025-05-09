@@ -26,7 +26,6 @@
         <strong>NOTE:</strong> Format all prices as currency using a dollar sign and rounding to two decimal places.
         <strong>NOTE:</strong> Format all percentages with a percent sign and rounded to two decimals.
 
-
         <ol type="A">
             <li>Choose one of the stock symbols listed above (i.e. "NFLX"), and store it in a variable called <code>symbol</code>.</li>
             <li>Dynamically compile the corresponding dataset URL using the <code>symbol</code> variable from Question A,
@@ -83,7 +82,6 @@
             return `${(percentage * 100).toFixed(2)}%`
         }
 
-
         var symbol = "NFLX" // one of: [AAPL, GOOGL, MSFT, NFLX, NVDA, SPOT]
         var filename = `daily_adjusted_${symbol}.csv`
         var requestUrl = `https://raw.githubusercontent.com/prof-rossetti/intro-software-dev-python-book/refs/heads/main/docs/data/${filename}`
@@ -94,22 +92,31 @@
             console.log("---------------------")
             console.log("PART 1...")
 
+            // 1. Number of days in the provided data
+            console.log("Number of days:", data.length)
 
+            // 2. Date and adjusted closing price on the earliest day
+            var earliestDay = data[data.length - 1]
+            console.log("Earliest day:", earliestDay["date"], "Adjusted Close:", formatUSD(earliestDay["adjusted_close"]))
 
+            // 3. Date and adjusted closing price on the latest day
+            var latestDay = data[0]
+            console.log("Latest day:", latestDay["date"], "Adjusted Close:", formatUSD(latestDay["adjusted_close"]))
 
+            // 4. Calculate the overall percent change
+            var earliestClose = parseFloat(earliestDay["adjusted_close"])
+            var latestClose = parseFloat(latestDay["adjusted_close"])
+            var percentChange = (latestClose - earliestClose) / earliestClose
+            console.log("Percent change:", formatPct(percentChange))
 
             console.log("---------------------")
             console.log("PART 2...")
 
+            // Display the answers in the designated elements
+            document.getElementById("display-symbol").textContent = symbol
+            document.getElementById("display-earliest").textContent = `${earliestDay["date"]} - ${formatUSD(earliestDay["adjusted_close"])}`
+            document.getElementById("display-latest").textContent = `${latestDay["date"]} - ${formatUSD(latestDay["adjusted_close"])}`
+            document.getElementById("display-pct-change").textContent = formatPct(percentChange)
 
-
-
-
-
-            }).catch(function(error) {
-                console.error("ERROR:", error)
-        })
-
-    </script>
-</body>
-</html>
+        }).catch(function(error) {
+           
