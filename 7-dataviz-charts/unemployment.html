@@ -19,7 +19,6 @@
     <h2>Setup</h2>
     <p>First obtain an AlphaVantage API Key, and supply it when prompted.</p>
 
-
     <h2>Part 1</h2>
     <p>
         Write JavaScript code to answer the questions below.
@@ -47,18 +46,11 @@
         </ol>
     </p>
 
-
     <div id="dataviz-container"></div>
 
-
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <!--script src="https://cdn.plot.ly/plotly-latest.min.js"></script-->
     <script src="https://cdn.plot.ly/plotly-3.0.0.min.js"></script>
     <script type="text/javascript">
-
-        function formatUSD(price) {
-            return `$${price.toFixed(2)}`
-        }
 
         function formatPct(percentage) {
             return `${(percentage * 100).toFixed(2)}%`
@@ -81,23 +73,60 @@
         var requestUrl = `https://www.alphavantage.co/query?function=UNEMPLOYMENT&apikey=${apiKey}&datatype=csv`
         d3.csv(requestUrl).then(function(data) {
             console.log("DATA:", data)
-            // observe the rates are strings so we will need to convert them to numbers to do math and chart them
+
+            // Convert unemployment rates to numbers for calculations
+            data.forEach(function(d) {
+                d.value = parseFloat(d['Unemployment Rate']);
+            });
 
             console.log("---------------------")
             console.log("PART 1...")
 
+            // 1. Display the number of datapoints
+            console.log(`Number of datapoints: ${data.length}`);
 
+            // 2. Display the time range (earliest and latest date)
+            const earliestDate = data[data.length - 1].date;
+            const latestDate = data[0].date;
+            console.log(`Time range: ${earliestDate} to ${latestDate}`);
 
+            // 3. Display average, min, and max unemployment rate
+            const allRates = data.map(d => d.value);
+            const avgRate = allRates.reduce((sum, rate) => sum + rate, 0) / allRates.length;
+            const minRate = Math.min(...allRates);
+            const maxRate = Math.max(...allRates);
+            console.log(`Avg Rate: ${avgRate.toFixed(2)}%`);
+            console.log(`Min Rate: ${minRate.toFixed(2)}%`);
+            console.log(`Max Rate: ${maxRate.toFixed(2)}%`);
 
-
+            // 4. Display average, min, and max unemployment rate over the past 12 months
+            const last12MonthsRates = allRates.slice(0, 12);
+            const avg12MonthRate = last12MonthsRates.reduce((sum, rate) => sum + rate, 0) / last12MonthsRates.length;
+            const min12MonthRate = Math.min(...last12MonthsRates);
+            const max12MonthRate = Math.max(...last12MonthsRates);
+            console.log(`Avg 12-Month Rate: ${avg12MonthRate.toFixed(2)}%`);
+            console.log(`Min 12-Month Rate: ${min12MonthRate.toFixed(2)}%`);
+            console.log(`Max 12-Month Rate: ${max12MonthRate.toFixed(2)}%`);
 
             console.log("---------------------")
             console.log("PART 2...")
 
+            // Create the line chart of the unemployment rate over time
+            const trace = {
+                x: data.map(d => d.date),
+                y: data.map(d => d.value),
+                mode: 'lines',
+                type: 'scatter',
+                name: 'Unemployment Rate'
+            };
 
+            const layout = {
+                title: 'Unemployment Rate Over Time',
+                xaxis: { title: 'Date' },
+                yaxis: { title: 'Unemployment Rate (%)' }
+            };
 
-
-
+            Plotly.newPlot('dataviz-container', [trace], layout);
 
         }).catch(function(error) {
             console.error("ERROR:", error)
