@@ -74,7 +74,7 @@
     convert this Celsius temperature to Fahrenheit (using the function from Part 2),
     and finally then display the Fahrenheit temperature in the designated span element.
   </p>
-
+<!-- 
   <label>Celsius Temperature:</label>
   <input id="input-temp-c" type="number" placeholder="-270" value="-270">
   <button id="calculate">Calculate</button>
@@ -86,7 +86,22 @@
   <script>
     console.log("---------------------");
     console.log("PART 3...");
+ -->
+  <label>Celsius Temperature:</label>
+  <input id="input-temp-c" type="number" placeholder="-270" value="-270">
+  <button id="calculate">Calculate</button>
 
+  <br>
+  <label>Fahrenheit Temperature:</label>
+  <span id="display-temp-f">TO</span>
+
+  <script>
+    console.log("---------------------");
+    console.log("PART 3...");
+
+    function calculateTemp(tempC) {
+      return (9 / 5) * tempC + 32;
+    }
     // Ensure everything runs after the page loads
     window.addEventListener("DOMContentLoaded", function () {
       document.getElementById("calculate").addEventListener("click", function () {
