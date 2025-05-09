@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,29 +11,16 @@
 
     <h2>Part 1</h2>
     <p>
-        Write JavaScript code to process the provided <code>products</code> variable to answer the questions below.
-        Log each of the answers to the console.
-
-        <ol type="A">
-            <li>Display the total number of products (i.e. 3).</li>
-            <li>Loop through each product and display their name and price, each on a new line.</li>
-            <li>Use a filter operation to arrive at an array containing just the products that have a price less than $50, and store them in a new variable called <code>matchingProducts</code>.</li>
-            <li>Display the total number of matching products from Question C (i.e. 2).</li>
-        </ol>
+        JavaScript logic to analyze and filter products.
     </p>
 
     <hr>
     <h2>Part 2</h2>
     <p>
-        Write JavaScript to programmatically populate the provided <code>div</code> element with information about each product.
-        Specifically, the top-level <code>div</code> should contain a new child <code>div</code> element for each product (i.e. the product-specific <code>div</code>).
-        Each product-specific <code>div</code> element should contain separate <code>p</code> tags to display the product's name, description, and price, respectively;
-        as well as an <code>img</code> tag to display the image of that product;
-        and finally a <code>hr</code> element to produce a horizontal line separator between each of the products.
+        JavaScript code to display each product visually on the page.
     </p>
 
     <div id="display-products"></div>
-
 
     <script type="text/javascript">
 
@@ -62,16 +48,55 @@
         console.log("---------------------")
         console.log("PART 1...")
 
+        // A. Total number of products
+        console.log("A. Total number of products:", products.length)
 
+        // B. Display each product's name and price
+        console.log("B. Product Details:")
+        products.forEach(product => {
+            console.log(`${product.name}: $${product.price.toFixed(2)}`)
+        });
 
+        // C. Filter products under $50
+        const matchingProducts = products.filter(product => product.price < 50)
+        console.log("C. Matching Products (< $50):", matchingProducts)
 
+        // D. Number of matching products
+        console.log("D. Number of Matching Products:", matchingProducts.length)
 
 
         console.log("---------------------")
         console.log("PART 2...")
 
+        const container = document.getElementById("display-products");
 
+        products.forEach(product => {
+            const productDiv = document.createElement("div");
 
+            const nameP = document.createElement("p");
+            nameP.textContent = `Name: ${product.name}`;
+
+            const descP = document.createElement("p");
+            descP.textContent = `Description: ${product.description}`;
+
+            const priceP = document.createElement("p");
+            priceP.textContent = `Price: $${product.price.toFixed(2)}`;
+
+            const image = document.createElement("img");
+            image.src = product.imageURL;
+            image.alt = product.name;
+            image.style.width = "360px";
+
+            const hr = document.createElement("hr");
+
+            productDiv.appendChild(nameP);
+            productDiv.appendChild(descP);
+            productDiv.appendChild(priceP);
+            productDiv.appendChild(image);
+            productDiv.appendChild(hr);
+
+            container.appendChild(productDiv);
+        });
 
     </script>
 </body>
