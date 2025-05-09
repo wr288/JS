@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,34 +11,17 @@
 
     <h2>Part 1</h2>
     <p>
-        Write JavaScript code to process the provided <code>gradebook</code> variable to answer the questions below.
-        Log each of the answers to the console.
-
-        <ol type="A">
-            <li>Display the date this data was downloaded (i.e. "2021-06-05").</li>
-            <li>Display the number of students in the gradebook (i.e. 10).</li>
-            <li>Loop through each student and display their name and grade, each on a new line.</li>
-            <li>Use a mapping operation to arrive at an array of just the numeric grades, store the array of numbers in a new variable called <code>grades</code>, and display it.</li>
-            <li>Using the array of grades from Question D, calculate and display the average grade (i.e. 83.64).</li>
-            <li>Using the array of grades from Question D, calculate and display the median grade (i.e. 87.6).</li>
-        </ol>
-
-        <strong>HINT:</strong> for questions E and F, use the <code>d3-array</code> library.
+        JavaScript logic to process gradebook data.
     </p>
-
 
     <hr>
     <h2>Part 2</h2>
     <p>
-        Write JavaScript to programmatically populate the provided <code>table</code> element with the gradebook data.
-        Specifically the table should contain an initial header row of the column names (i.e. "Student ID", "Student Name", and "Final Grade"),
-        followed by a row for each student in the gradebook.
+        JavaScript code to populate a table with gradebook info.
     </p>
 
-    <table id="display-gradebook">
+    <table id="display-gradebook" border="1" style="border-collapse: collapse; margin-top: 1em;">
     </table>
-
-
 
     <script src="https://d3js.org/d3-array.v2.min.js"></script>
     <script type="text/javascript">
@@ -64,18 +46,52 @@
         console.log("---------------------")
         console.log("PART 1...")
 
+        // A. Display the download date
+        console.log("A. Download Date:", gradebook.downloadDate)
 
+        // B. Number of students
+        console.log("B. Number of Students:", gradebook.students.length)
 
+        // C. Loop through students and display name + grade
+        console.log("C. Student Grades:")
+        gradebook.students.forEach(student => {
+            console.log(`${student.name}: ${student.finalGrade}`)
+        })
 
+        // D. Map to numeric grades
+        const grades = gradebook.students.map(student => student.finalGrade)
+        console.log("D. Grades Array:", grades)
+
+        // E. Average grade using d3.mean
+        const avgGrade = d3.mean(grades)
+        console.log("E. Average Grade:", avgGrade.toFixed(2))
+
+        // F. Median grade using d3.median
+        const medianGrade = d3.median(grades)
+        console.log("F. Median Grade:", medianGrade.toFixed(2))
 
 
         console.log("---------------------")
         console.log("PART 2...")
 
+        // Get table element
+        const table = document.getElementById("display-gradebook");
 
+        // Create header row
+        const headerRow = table.insertRow();
+        ["Student ID", "Student Name", "Final Grade"].forEach(header => {
+            const th = document.createElement("th");
+            th.textContent = header;
+            headerRow.appendChild(th);
+        });
 
-
-
+        // Create one row per student
+        gradebook.students.forEach(student => {
+            const row = table.insertRow();
+            row.insertCell().textContent = student.studentId;
+            row.insertCell().textContent = student.name;
+            row.insertCell().textContent = student.finalGrade.toFixed(1);
+        });
 
     </script>
 
