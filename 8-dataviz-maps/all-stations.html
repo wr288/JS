@@ -29,7 +29,6 @@
         </ol>
     </p>
 
-
     <hr>
     <h2>Part 2</h2>
     <p>
@@ -44,11 +43,9 @@
         </ol>
     </p>
 
-
     <hr>
     <h2>Map</h2>
     <div id="my-map-container" style="width:75%; height:400px; margin:25px;"></div>
-
 
     <script type="text/javascript">
 
@@ -65,7 +62,6 @@
           {abbrev: "STR", name: "Stratford", lat: 41.19428563274378, lon: -73.13156604766846, url: "https://www.mta.info/stations/stratford"},
           {abbrev: "MIL", name: "Milford", lat: 41.223229872871606, lon: -73.05766582489014, url: "https://www.mta.info/stations/milford"},
           {abbrev: "WH", name: "West Haven", lat: 41.271408, lon: -72.964722, url: "https://www.mta.info/stations/west-haven"},
-
           {abbrev: "NHV", name: "New Haven Union Station", lat: 41.29771887088102, lon: -72.92673110961914, url: "https://shorelineeast.com/stations/union-station-new-haven/"},
           {abbrev: "ST", name: "New Haven State Street Station", lat: 41.3049849812806, lon: -72.92176365852356, url: "https://shorelineeast.com/stations/state-street-station-new-haven/"},
           {abbrev: "BRN", name: "Branford", lat: 41.27462757904543, lon: -72.81724601984024, url: "https://shorelineeast.com/stations/branford-station/"},
@@ -98,22 +94,25 @@
       L.tileLayer(tileUrlTemplate, tileLayerOptions)
           .addTo(map);
 
-
-
       console.log("---------------------")
       console.log("PART 1...")
 
+      // Part 1: Displaying the number of stations and looping through each
+      console.log(`Number of stations: ${trainStations.length}`);
 
-
-
-
+      trainStations.forEach(function(station) {
+          console.log(`Station Name: ${station.name}, Abbreviation: ${station.abbrev}`);
+      });
 
       console.log("---------------------")
       console.log("PART 2...")
 
-
-
-
+      // Part 2: Displaying markers on the map
+      trainStations.forEach(function(station) {
+          var marker = L.marker([station.lat, station.lon])
+              .addTo(map)
+              .bindPopup(`<b>${station.name}</b><br><a href="${station.url}" target="_blank">More Info</a>`);
+      });
 
     </script>
   </body>
