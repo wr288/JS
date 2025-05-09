@@ -11,14 +11,13 @@
 
     <h2>Dataset Information</h2>
     <p>For this exercise, we will use data from the AlphaVantage API.
-        Specifically we will use the <a href="https://www.alphavantage.co/documentation/#inflation">"Inflation" endpoint</a>.
+        Specifically, we will use the <a href="https://www.alphavantage.co/documentation/#inflation">"Inflation" endpoint</a>.
         Inflation rates are a measure of consumer prices.
         Consult the API documentation to learn more.
     </p>
 
     <h2>Setup</h2>
     <p>First obtain an AlphaVantage API Key, and supply it when prompted.</p>
-
 
     <h2>Part 1</h2>
     <p>
@@ -30,15 +29,13 @@
             <li>Display the name of this dataset (i.e. "Inflation - US Consumer Prices").</li>
             <li>Display the time frequency of this dataset (i.e. "annual").</li>
             <li>Display the number of datapoints provided. (i.e. 65).</li>
-            <li>Display the time range (earliest and latest date) of available data (i.e. "1960-01-01" to "2024-01-01".</li>
+            <li>Display the time range (earliest and latest date) of available data (i.e. "1960-01-01" to "2024-01-01").</li>
             <li>Display the average, min, and max inflation rate (using all available data).</li>
             <li>Display the average, min, and max inflation rate (over the past ten years only).
-                <strong>NOTE:</strong> it's sufficient to just take the first twelve datapoints using an array slicing approach.
+                <strong>NOTE:</strong> it's sufficient to just take the first ten datapoints using an array slicing approach.
             </li>
         </ol>
     </p>
-
-
 
     <hr>
     <h2>Part 2</h2>
@@ -53,9 +50,7 @@
 
     <div id="dataviz-container" style="margin-top:20px;"></div>
 
-
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <!--script src="https://cdn.plot.ly/plotly-latest.min.js"></script-->
     <script src="https://cdn.plot.ly/plotly-3.0.0.min.js"></script>
     <script type="text/javascript">
 
@@ -87,19 +82,73 @@
             console.log("---------------------")
             console.log("PART 1...")
 
+            // Assuming the response contains a field with the key 'data'
+            var data = parsedResponse["data"];
 
+            // 1. Display dataset name
+            var datasetName = "Inflation - US Consumer Prices";
+            console.log("Dataset Name:", datasetName);
 
+            // 2. Display time frequency
+            var timeFrequency = "annual";
+            console.log("Time Frequency:", timeFrequency);
 
+            // 3. Display number of datapoints
+            var dataPointsCount = data.length;
+            console.log("Number of Data Points:", dataPointsCount);
 
+            // 4. Display time range
+            var earliestDate = data[0]["date"];
+            var latestDate = data[data.length - 1]["date"];
+            console.log("Time Range:", earliestDate, "to", latestDate);
 
+            // 5. Calculate average, min, and max inflation rate (all data)
+            var inflationRates = data.map(function(entry) { return parseFloat(entry["inflationRate"]); });
+            var averageInflation = inflationRates.reduce((sum, rate) => sum + rate, 0) / inflationRates.length;
+            var minInflation = Math.min(...inflationRates);
+            var maxInflation = Math.max(...inflationRates);
+            console.log("Average Inflation Rate:", averageInflation);
+            console.log("Min Inflation Rate:", minInflation);
+            console.log("Max Inflation Rate:", maxInflation);
+
+            // 6. Calculate average, min, and max inflation rate (last 10 years)
+            var last10YearsRates = inflationRates.slice(0, 10);
+            var averageInflation10 = last10YearsRates.reduce((sum, rate) => sum + rate, 0) / last10YearsRates.length;
+            var minInflation10 = Math.min(...last10YearsRates);
+            var maxInflation10 = Math.max(...last10YearsRates);
+            console.log("Last 10 Years Average Inflation Rate:", averageInflation10);
+            console.log("Last 10 Years Min Inflation Rate:", minInflation10);
+            console.log("Last 10 Years Max Inflation Rate:", maxInflation10);
 
             console.log("---------------------")
             console.log("PART 2...")
 
+            // Part 2: Create a line chart of the inflation rate over time
 
+            // Prepare data for the chart
+            var dates = data.map(function(entry) { return entry["date"]; });
+            var inflationRatesForChart = data.map(function(entry) { return entry["inflationRate"]; });
 
+            var trace = {
+                x: dates,
+                y: inflationRatesForChart,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Inflation Rate'
+            };
 
+            var layout = {
+                title: 'Inflation Rate Over Time',
+                xaxis: {
+                    title: 'Year'
+                },
+                yaxis: {
+                    title: 'Inflation Rate (%)'
+                }
+            };
 
+            // Create the line chart using Plotly
+            Plotly.newPlot('dataviz-container', [trace], layout);
 
         }).catch(function(error) {
             console.error("ERROR:", error)
