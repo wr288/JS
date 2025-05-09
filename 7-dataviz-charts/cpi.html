@@ -11,7 +11,7 @@
 
     <h2>Dataset Information</h2>
     <p>For this exercise, we will use data from the AlphaVantage API.
-        Specifically we will use the <a href="https://www.alphavantage.co/documentation/#cpi">"Consumer Price Index (CPI)" endpoint</a>.
+        Specifically, we will use the <a href="https://www.alphavantage.co/documentation/#cpi">"Consumer Price Index (CPI)" endpoint</a>.
         CPI is "widely regarded as the barometer of inflation levels in the broader economy".
         Consult the API documentation to learn more.
     </p>
@@ -46,17 +46,12 @@
 
     <div id="dataviz-container"></div>
 
-
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <!--script src="https://cdn.plot.ly/plotly-latest.min.js"></script-->
     <script src="https://cdn.plot.ly/plotly-3.0.0.min.js"></script>
     <script type="text/javascript">
 
-
         // AVOID HARD-CODING THE CREDENTIALS
         // USE SESSION STORAGE TO MINIMIZE THE NUMBER OF TIMES WE HAVE TO PROVIDE THE CREDENTIAL
-        // sessionStorage.clear()
-
         // check session storage for the API Key:
         var apiKey = sessionStorage.getItem("ALPHAVANTAGE_API_KEY")
         if (!apiKey) {
@@ -66,30 +61,64 @@
             sessionStorage.setItem("ALPHAVANTAGE_API_KEY", apiKey)
         }
 
+        // Request URL for the CPI API endpoint
         var requestUrl = `https://www.alphavantage.co/query?function=CPI&apikey=${apiKey}`
-        console.log(requestUrl)
 
         d3.json(requestUrl).then(function(parsedResponse) {
             console.log("RESPONSE:", parsedResponse)
 
-
             console.log("---------------------")
             console.log("PART 1...")
 
+            // Extract dataset information
+            var data = parsedResponse["data"];  // Assuming the response contains a "data" field
 
+            // 1. Display dataset name
+            var datasetName = parsedResponse["name"];
+            console.log("Dataset Name:", datasetName);
 
+            // 2. Display time frequency
+            var timeFrequency = parsedResponse["timeFrequency"];
+            console.log("Time Frequency:", timeFrequency);
 
+            // 3. Display number of datapoints
+            var dataPointsCount = data.length;
+            console.log("Number of Data Points:", dataPointsCount);
 
-
+            // 4. Display time range
+            var earliestDate = data[0]["date"];
+            var latestDate = data[data.length - 1]["date"];
+            console.log("Time Range:", earliestDate, "to", latestDate);
 
             console.log("---------------------")
             console.log("PART 2...")
 
+            // Part 2: Create a line chart of the CPI over time
 
+            // Prepare data for the chart
+            var dates = data.map(function(entry) { return entry["date"]; });
+            var cpis = data.map(function(entry) { return entry["cpi"]; });
 
+            var trace = {
+                x: dates,
+                y: cpis,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'CPI'
+            };
 
+            var layout = {
+                title: 'Consumer Price Index Over Time',
+                xaxis: {
+                    title: 'Date'
+                },
+                yaxis: {
+                    title: 'CPI Value'
+                }
+            };
 
-
+            // Create the line chart using Plotly
+            Plotly.newPlot('dataviz-container', [trace], layout);
 
         }).catch(function(error) {
             console.error("ERROR:", error)
