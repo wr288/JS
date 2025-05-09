@@ -48,14 +48,16 @@
     <p>
         Write JavaScript code to answer the questions below.
         Display the answers on the page in the designated areas.
+    </p>
 
-        <ol type="A">
-            <li>Sort the products by name in ascending order.</li>
-            <li>Loop through all the sorted products and display the name and price of each, in a separate list item.
-                Use the designated <code>ul</code> element below.
-                Format the prices as currency using a dollar sign and rounding to two decimal places.
-            </li>
-        </ol>
+    <ol type="A">
+        <li>Sort the products by name in ascending order.</li>
+        <li>Loop through all the sorted products and display the name and price of each, in a separate list item.
+            Use the designated <code>ul</code> element below.
+            Format the prices as currency using a dollar sign and rounding to two decimal places.
+        </li>
+    </ol>
+
     </p>
 
     <hr>
@@ -65,13 +67,11 @@
     <ul id="display-groceries">
     </ul>
 
-
-
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script type="text/javascript">
 
         function formatUSD(price) {
-            return `$${price.toFixed(2)}`
+            return `$${parseFloat(price).toFixed(2)}`
         }
 
         var requestUrl = "https://raw.githubusercontent.com/prof-rossetti/intro-to-python/main/data/products.csv"
@@ -83,25 +83,59 @@
             console.log("---------------------")
             console.log("PART 1...")
 
+            // 1. Display the number of products
+            console.log("Number of products:", products.length)
 
+            // 2. Loop through the products and display the name and price of each
+            products.forEach(product => {
+                console.log(`Name: ${product.name}, Price: ${formatUSD(product.price)}`)
+            })
 
+            // 3. Unique list of departments
+            let departments = []
+            products.forEach(product => {
+                if (!departments.includes(product.department)) {
+                    departments.push(product.department)
+                }
+            })
+            console.log("Unique departments:", departments)
 
+            // 4. Display the number of unique departments
+            console.log("Number of unique departments:", departments.length)
 
+            // 5. Display the department names, all upper-case
+            departments.forEach(department => {
+                console.log(department.toUpperCase())
+            })
+
+            // 6. Filter products in the "beverages" department
+            let beverages = products.filter(product => product.department.toLowerCase() === "beverages")
+            console.log("Beverage products:", beverages)
+
+            // 7. Display the number of beverage products
+            console.log("Number of beverage products:", beverages.length)
+
+            // 8. Calculate the average price of beverage products
+            let totalBeveragePrice = beverages.reduce((total, beverage) => total + parseFloat(beverage.price), 0)
+            let averageBeveragePrice = totalBeveragePrice / beverages.length
+            console.log("Average price of beverage products:", formatUSD(averageBeveragePrice))
 
             console.log("---------------------")
             console.log("PART 2...")
 
+            // 1. Sort the products by name
+            products.sort((a, b) => a.name.localeCompare(b.name))
 
+            // 2. Display the sorted products in the designated list
+            let groceriesList = document.getElementById("display-groceries")
+            products.forEach(product => {
+                let li = document.createElement("li")
+                li.textContent = `${product.name} - ${formatUSD(product.price)}`
+                groceriesList.appendChild(li)
+            })
 
-
-
-
-
-
-
-
-            }).catch(function(error) {
-                console.error("ERROR:", error)
+        }).catch(function(error) {
+            console.error("ERROR:", error)
         })
 
     </script>
