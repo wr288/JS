@@ -1,46 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>D3 POST Request Example</title>
-    <!-- Include D3 from a CDN -->
-    <script src="https://d3js.org/d3.v7.min.js"></script>
-  </head>
-  <body>
-    <h1>D3 POST Request Example</h1>
-    <script>
+<head>
+  <meta charset="UTF-8" />
+  <title>D3 POST Request Example</title>
+  <!-- Include D3 from a CDN -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1em;
+    }
+    pre {
+      background-color: #f4f4f4;
+      padding: 10px;
+      border: 1px solid #ddd;
+      overflow-x: auto;
+    }
+  </style>
+</head>
+<body>
 
-      // URL of the testing endpoint.
-      // httpbin.org is useful since it returns our data as part of the response.
-      const url = "https://httpbin.org/post";
+  <h1>D3 POST Request Example</h1>
+  <p>This example sends a JSON POST request to <code>https://httpbin.org/post</code> and displays the response below.</p>
 
+  <h2>Response Output:</h2>
+  <pre id="response-box">Waiting for response...</pre>
 
-      // Data to be sent in the POST request.
-      const postData = {
-        name: "Waldo Ma",
-        email: "waldo@example.com",
-        age: 75
-      }
+  <script>
+    const url = "https://httpbin.org/post";
 
-      // Use d3.json to send the POST request.
-      // Note: d3.json accepts an options object similar to the Fetch API.
-      d3.json(url, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify(postData)
-      })
-      .then(response => {
-        // Log the response so you can verify that the server received the data.
-        console.log("SUCCESS!")
-        console.log("Response:", response)
-        // work with the response here
+    const postData = {
+      name: "Waldo Ma",
+      email: "waldo@example.com",
+      age: 75
+    };
 
+    d3.json(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(postData)
+    })
+    .then(response => {
+      console.log("SUCCESS!");
+      console.log("Response:", response);
 
+      // Display the formatted JSON response in the <pre> block
+      d3.select("#response-box")
+        .text(JSON.stringify(response, null, 2));
+    })
+    .catch(error => {
+      console.error("Error in POST request:", error);
+      d3.select("#response-box")
+        .text("Error: " + error.message);
+    });
+  </script>
 
-      })
-      .catch(error => {
-        console.error("Error in POST request:", error)
-      })
-    </script>
-  </body>
+</body>
 </html>
