@@ -86,18 +86,65 @@
             .then(function(data){
                 console.log("DATA", data)
 
+                // PART 1
 
                 console.log("---------------------")
                 console.log("PART 1...")
 
+                // 1. Fetch the weather data (already done)
+                // 2. Display the date this data was generated
+                console.log("Date this data was generated:", data.metadata.generated)
 
+                // 3. Display the number of periods of available data
+                const periods = data.properties.periods;
+                console.log("Number of periods:", periods.length)
 
+                // 4. Filter for daytime periods
+                const daytimePeriods = periods.filter(period => period.isDaytime);
+                console.log("Daytime periods:", daytimePeriods)
+
+                // 5. Display the number of daytime periods
+                console.log("Number of daytime periods:", daytimePeriods.length)
+
+                // 6. Display a human-readable weather forecast for each daytime period
+                daytimePeriods.forEach(period => {
+                    console.log(`Period: ${period.name}`);
+                    console.log(`Temperature: ${period.temperature}${degreeSymbol}${period.temperatureUnit}`);
+                    console.log(`Forecast: ${period.detailedForecast}`);
+                    console.log("----------------------");
+                });
+
+                // PART 2
 
                 console.log("---------------------")
                 console.log("PART 2...")
 
+                // 1. Display the date this data was generated on the webpage
+                document.getElementById("display-date").textContent = data.metadata.generated;
 
+                // 2. Display the seven-day forecast using a table
+                const table = document.getElementById("display-forecast");
 
+                // Add the table header
+                let headerRow = table.insertRow();
+                headerRow.insertCell().textContent = "Period";
+                headerRow.insertCell().textContent = "Temperature";
+                headerRow.insertCell().textContent = "Forecast";
+                headerRow.insertCell().textContent = "Icon";
+
+                // Add a row for each daytime period
+                daytimePeriods.slice(0, 7).forEach(period => {
+                    let row = table.insertRow();
+                    row.insertCell().textContent = period.name;
+                    row.insertCell().textContent = `${period.temperature}${degreeSymbol}${period.temperatureUnit}`;
+                    row.insertCell().textContent = period.detailedForecast;
+
+                    let iconCell = row.insertCell();
+                    let iconImg = document.createElement("img");
+                    iconImg.src = period.icon;  // Use the weather icon URL from the data
+                    iconImg.alt = `Weather icon for ${period.name}`;
+                    iconCell.appendChild(iconImg);
+                });
 
             })
             .catch(err => console.log(err))
