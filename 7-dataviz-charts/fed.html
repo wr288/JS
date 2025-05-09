@@ -11,7 +11,7 @@
 
     <h2>Dataset Information</h2>
     <p>For this exercise, we will use data from the AlphaVantage API.
-        Specifically we will use the <a href="https://www.alphavantage.co/documentation/#interest-rate">"Federal Funds (Interest Rate)" endpoint</a>.
+        Specifically, we will use the <a href="https://www.alphavantage.co/documentation/#interest-rate">"Federal Funds (Interest Rate)" endpoint</a>.
         The Federal Funds Rate represents the rate at which banks borrow from each other,
         and impacts various other aspects of the economy, including borrowing costs, interest rates, and inflation.
         Consult the API documentation to learn more.
@@ -30,7 +30,7 @@
             <li>Display the name of this dataset (i.e. "Effective Federal Funds Rate").</li>
             <li>Display the time frequency of this dataset (i.e. "monthly").</li>
             <li>Display the number of datapoints provided. (i.e. 849).</li>
-            <li>Display the time range (earliest and latest date) of available data (i.e. "1954-07-01" to "2025-03-01".</li>
+            <li>Display the time range (earliest and latest date) of available data (i.e. "1954-07-01" to "2025-03-01").</li>
             <li>Display the average, min, and max interest rate (using all available data).</li>
             <li>Display the average, min, and max interest rate (over the past twelve months only).
                 <strong>NOTE:</strong> it's sufficient to just take the first twelve datapoints using an array slicing approach.
@@ -51,16 +51,12 @@
 
     <div id="dataviz-container"></div>
 
-
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script src="https://cdn.plot.ly/plotly-3.0.0.min.js"></script>
     <script type="text/javascript">
 
-
         // AVOID HARD-CODING THE CREDENTIALS
         // USE SESSION STORAGE TO MINIMIZE THE NUMBER OF TIMES WE HAVE TO PROVIDE THE CREDENTIAL
-        // sessionStorage.clear()
-
         // check session storage for the API Key:
         var apiKey = sessionStorage.getItem("ALPHAVANTAGE_API_KEY")
         if (!apiKey) {
@@ -70,29 +66,83 @@
             sessionStorage.setItem("ALPHAVANTAGE_API_KEY", apiKey)
         }
 
+        // Request URL for the Federal Funds Rate API endpoint
         var requestUrl = `https://www.alphavantage.co/query?function=FEDERAL_FUNDS_RATE&interval=monthly&apikey=${apiKey}`
         console.log(requestUrl)
 
         d3.json(requestUrl).then(function(parsedResponse) {
             console.log("RESPONSE:", parsedResponse)
 
-
             console.log("---------------------")
             console.log("PART 1...")
 
+            // Assuming the response contains a field with the key 'data'
+            var data = parsedResponse["data"];
 
+            // 1. Display dataset name
+            var datasetName = "Effective Federal Funds Rate";
+            console.log("Dataset Name:", datasetName);
 
+            // 2. Display time frequency
+            var timeFrequency = "monthly";
+            console.log("Time Frequency:", timeFrequency);
 
+            // 3. Display number of datapoints
+            var dataPointsCount = data.length;
+            console.log("Number of Data Points:", dataPointsCount);
 
+            // 4. Display time range
+            var earliestDate = data[0]["date"];
+            var latestDate = data[data.length - 1]["date"];
+            console.log("Time Range:", earliestDate, "to", latestDate);
 
+            // 5. Calculate average, min, and max interest rate (all data)
+            var rates = data.map(function(entry) { return parseFloat(entry["rate"]); });
+            var averageRate = rates.reduce((sum, rate) => sum + rate, 0) / rates.length;
+            var minRate = Math.min(...rates);
+            var maxRate = Math.max(...rates);
+            console.log("Average Rate:", averageRate);
+            console.log("Min Rate:", minRate);
+            console.log("Max Rate:", maxRate);
+
+            // 6. Calculate average, min, and max interest rate (last 12 months)
+            var last12MonthsRates = rates.slice(0, 12);
+            var averageRate12 = last12MonthsRates.reduce((sum, rate) => sum + rate, 0) / last12MonthsRates.length;
+            var minRate12 = Math.min(...last12MonthsRates);
+            var maxRate12 = Math.max(...last12MonthsRates);
+            console.log("Last 12 Months Average Rate:", averageRate12);
+            console.log("Last 12 Months Min Rate:", minRate12);
+            console.log("Last 12 Months Max Rate:", maxRate12);
 
             console.log("---------------------")
             console.log("PART 2...")
 
+            // Part 2: Create a line chart of the Federal Funds Rate over time
 
+            // Prepare data for the chart
+            var dates = data.map(function(entry) { return entry["date"]; });
+            var ratesForChart = data.map(function(entry) { return entry["rate"]; });
 
+            var trace = {
+                x: dates,
+                y: ratesForChart,
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Federal Funds Rate'
+            };
 
+            var layout = {
+                title: 'Federal Funds Rate Over Time',
+                xaxis: {
+                    title: 'Date'
+                },
+                yaxis: {
+                    title: 'Federal Funds Rate (%)'
+                }
+            };
 
+            // Create the line chart using Plotly
+            Plotly.newPlot('dataviz-container', [trace], layout);
 
         }).catch(function(error) {
             console.error("ERROR:", error)
