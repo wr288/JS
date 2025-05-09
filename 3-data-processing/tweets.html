@@ -1,15 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Tweets</title>
-
-     <style>
-        /*
-            STYLES FOR TABLE BORDERS (FEEL FREE TO UPDATE)
-            https://www.w3schools.com/html/html_table_borders.asp
-        */
+    <style>
         table, th, td {
             border: 1px solid black;
             border-collapse: collapse;
@@ -23,40 +17,14 @@
     <a href="../index.html">Home</a>
 
     <h2>Part 1</h2>
-    <p>
-        Write JavaScript code to process the provided <code>tweets</code> variable to answer the questions below.
-        Log each of the answers to the console.
-
-        <ol type="A">
-            <li>Display the screen name of the user who authored the first tweet (i.e.  "@sandwoah").</li>
-            <li>Of all the tweets which include the phrase "@sandwoah" in their full text, display the screen name of the user who authored that tweet, each on a separate line (i.e. "user2", then "user3").</li>
-            <li> Of all the tweets which include the phrase "@sandwoah" in their full text, determine which tweet has the greatest number of likes, and then display the screen name of the user who authored that tweet (i.e. "user3").
-                <strong>NOTE:</strong> your solution should work regardless of what order the tweets are in.
-            </li>
-        </ol>
-    </p>
-
+    <p>JavaScript code to log tweet data to the console.</p>
 
     <hr>
     <h2>Part 2</h2>
-    <p>
-        Write JavaScript code to process the provided <code>tweets</code> variable to answer the questions below.
-        Display the answers on the page in the designated places.
-        <ol type="A">
-            <li>Sort all of the tweets on the basis of likes count in descending order, so the tweet with the highest likes is first.</li>
-            <li>Display the sorted tweets in a table using the designated <code>table</code> element.
-                The table should have five columns:
-                "Tweet Id", "Tweet Text", "User Screen Name", "User Followers", and "Tweet Likes".
-                There should be a row for each tweet.
-                Include the tweet's id, full text, user screen name, user number of followers, and the tweet's likes count.
-            </li>
-
-        </ol>
-    </p>
+    <p>JavaScript to display tweet data in a sorted table.</p>
 
     <table id="social-feed">
     </table>
-
 
     <script src="https://cdn.jsdelivr.net/npm/d3-array@3"></script>
     <script type="text/javascript">
@@ -102,18 +70,67 @@
         console.log("---------------------")
         console.log("PART 1...")
 
+        // A. First tweet author screen name
+        console.log("A.", tweets[0].user.screen_name)
 
+        // B. Tweets that mention @sandwoah
+        const mentions = tweets.filter(tweet => tweet.full_text.includes("@sandwoah"))
+        console.log("B. Mentions of @sandwoah:")
+        mentions.forEach(tweet => {
+            console.log(tweet.user.screen_name)
+        })
 
-
-
+        // C. Highest liked tweet among those that mention @sandwoah
+        const maxLikesTweet = d3.max(mentions, d => d.likes_count)
+        const topTweet = mentions.find(tweet => tweet.likes_count === maxLikesTweet)
+        console.log("C. Most liked mention by:", topTweet.user.screen_name)
 
         console.log("---------------------")
         console.log("PART 2...")
 
+        // A. Sort tweets by likes descending
+        const sortedTweets = tweets.slice().sort((a, b) => b.likes_count - a.likes_count)
 
+        // B. Create and populate table
+        const table = document.getElementById("social-feed")
 
+        // Header row
+        const headerRow = document.createElement("tr")
+        const headers = ["Tweet Id", "Tweet Text", "User Screen Name", "User Followers", "Tweet Likes"]
+        headers.forEach(header => {
+            const th = document.createElement("th")
+            th.textContent = header
+            headerRow.appendChild(th)
+        })
+        table.appendChild(headerRow)
+
+        // Data rows
+        sortedTweets.forEach(tweet => {
+            const row = document.createElement("tr")
+
+            const idCell = document.createElement("td")
+            idCell.textContent = tweet.id
+            row.appendChild(idCell)
+
+            const textCell = document.createElement("td")
+            textCell.textContent = tweet.full_text
+            row.appendChild(textCell)
+
+            const userCell = document.createElement("td")
+            userCell.textContent = tweet.user.screen_name
+            row.appendChild(userCell)
+
+            const followersCell = document.createElement("td")
+            followersCell.textContent = tweet.user.followers
+            row.appendChild(followersCell)
+
+            const likesCell = document.createElement("td")
+            likesCell.textContent = tweet.likes_count
+            row.appendChild(likesCell)
+
+            table.appendChild(row)
+        })
 
     </script>
-
 </body>
 </html>
